@@ -1,0 +1,109 @@
+
+
+
+<!-- planetA quakechart.html  REPLACED BY kwaks.html THIS IS UNUSED AS OF VER 33 -->
+{% extends "layout.html" %}
+{% block pbody %}
+<div name="msg" id="msg">
+    <P> <font size="3" color="green"> Animation of sequences of earthquakes. Data is from earthquake.usgs.gov    </font> </P>
+</div>
+<H2>Earthquake Visualization</H2> 
+<div id="rawdata"></div>
+    <center>
+            <table id="wtf" border="1" bgcolor="white">
+            <TR>
+                <TD style="vertical-align: top;"> <div><canvas id="canv" width="1000" height="500" style="border:1px solid #d3d3d3;"></div></TD>
+                <TD  valign="top">
+                    <table border="0" valign="top" bgcolor="white">
+                        <TR>
+                            <TD> 
+                                <table border="0" bgcolor="white"  style="width: 130px;">
+                                <TR><TH> Data&nbsp;Set: </TH> <TD colspan="3"> {{ session['database'] }} / {{session['activetable']}}  </TD></TR>
+                                <tr> <th colspan="1"  style="padding-top: 8px; vertical-align: top;">
+                                        Choose&nbsp;a&nbsp;table: 
+                                    </th>
+                                    <td colspan="3"  style="padding-top: 1px; vertical-align: top;">
+                                        <!-- ok, I have no idea why I can't put a form here. I can put the exact form code
+                                             outside table id="wtf" and the code works... Aha, vscode's colors got weirder 
+                                             after "wtf" -- the 2nd quote turned red. Turned out I had colspan="2>  
+                                        --> 
+                                        <table><tr><td>
+                                            <form method="POST" action="/quakechart">
+                                                <select id="options" name="option">
+                                                {% for option in options %}
+                                                    <option value="{{ option }}">{{ option }}</option>
+                                                {% endfor %}
+                                                </select>
+                                                <button type="submit" style="width:120px;" ><B>Load&nbsp;Table</B></button>
+                                            </form>
+                                            </td></tr>
+                                        </table>
+                                        <!-- <button id = "loadv2" style="width:120px;" ><B>Load&nbsp;v2</B></button> -->
+                                        <!-- <button id = "loadv3" style="width:120px;" ><B>Load&nbsp;v3</B></button> -->
+                                    </td>
+                                </tr>
+                                </th></tr>
+                                <TR><TH style="vertical-align: top;"> Date&nbsp;Range: </TH> 
+                                    <TD colspan="3"> From:&nbsp;<span id="daterangefromPP">{{daterange[3]}}</span>
+                                    <BR> Thru:&nbsp; <span id="daterangetoPP">{{daterange[4]}}</span></TD> 
+                                        <!-- <TR><TD colspan="4"> -->
+                                        <span class="xHideableDiv" id="dateinterval">{{daterange[2]}}</span>&nbsp;
+                                        <span class="xHideableDiv" id="daterangefrom">{{daterange[0]}}</span>&nbsp;
+                                        <span class="xHideableDiv" id="daterangeto">{{daterange[1]}}</span>
+                                        <!-- </TD></TR> -->
+                                        <!-- I should've used an easier-to-extend JSON struct that is parsed. -->
+                                </TR>
+                            </TD>
+                        </TR>
+                                
+                                <TR><Th> Delay:</Th><TD><input id="quakespeed" type=text size=4 value="{{delaytime}}"></TD>
+                                    <TD> Start&nbsp;Row</TD><TD><span id="quakerow">{{quakerow}}</span> <span</TD>
+                                </TR>
+                                <TR><TD colspan="4" style="text-align: left; padding-top: 16px;"> 
+                                    <Button id="nextqevent" style="height:30px;width:100px">Next QEvent</Button> 
+                                    <Button id="allqevents" style="height:30px;width:100px">All QEvents</Button> 
+                                    <!-- <Button id="colorQEVENTS" style="height:30px;width:120px">Color QEvents</Button>  -->
+                                    </TD> 
+                                </TR>
+                                <TR><TD colspan="4"> 
+                                    <form>
+                                    <select id="mySelect" size="25" style="width: 330px; font-size:9pt; color: #000fff; font-family: 'Courier New', monospace;">
+                                    <item>&nbsp;</item>    
+                                    </select>
+                                    </form>
+                                </TD></TR>
+                                <TR><TD colspan="4"> <font size="2" color="green">{{ session['database'] }} / {{session['activetable']}} </font></TD></TR>
+                            </table>
+                        </TD></TR>
+                    </TD></TR>
+                </table>
+            </TD></TR>
+        </table>
+    </center>
+    <BR> Note: <span id="quakenote"> {{ note }} </span>
+    <BR> Msg: <span id="quakemsg"> {{ msg }} </span>
+    <span class="HideableDiv"> <button type="button" id="getQEVENTjson" >getQEVENTjson</button> </span>
+{% endblock %}
+
+{% block foot %}
+    <ul>
+    <LI> Earthquakes are represented by dots whose size is scaled based on magnitude.
+    <!-- <LI> Time between display of each quake is proportional to actual time interval. -->
+    <LI> Time between display of each quake is fixed -- value is in the "Delay" field (msec.)
+    <LI> Earthquakes are displayed in chronological order.
+    <LI> The color of the dot is used to show how recent the quake was. 
+         The color progression is as follows:
+        <table>
+            <TR> 
+                <TD bgcolor="#ff0000">Most Recent ( t = 0 ) </TD>
+                <TD bgcolor="#ff5500">Previous ( t = -1 ) </TD>
+                <TD bgcolor="#A52A2A">Previous ( t = -2 ) </TD>
+                <TD bgcolor="#000000"><font color="white">All earlier ( t <= -3 ) </font></TD>
+            </TR>
+        </table>
+    </ul>
+   {% for i in range(4): %}
+       {{ i  | safe }}  
+   {% endfor %}
+ {% endblock %}    
+<!-- END quakechart.html  -->

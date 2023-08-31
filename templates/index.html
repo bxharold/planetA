@@ -1,0 +1,23 @@
+
+
+
+<!-- planetA index.html -->
+{% extends "layout.html" %}
+{% block pbody %}
+    <H2>PlanetA start page. </H2>
+    <form action="/greet" method="get">
+        <input autocomplete="off" autofocus name="name" placeholder="Name" type="text">
+        <button type="submit">New Flask Session (?)</button>
+    </form>
+{% endblock %}
+{% block foot %}
+<font size="3" color="green">  {{ session['database'] }} / {{session['activetable']}} </font> 
+poodle.
+<pre><P>  {{session}}  </P>
+    {% for k in session.keys() %}
+       {{ k }}     {{ session[k] }}
+    {% endfor %}
+</pre>
+
+{% endblock %}
+<!-- END index.html  -->

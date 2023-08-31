@@ -1,0 +1,1 @@
+cat ../planetA.py ../static/planetjs.js layout.html index.html greet.html isschart.html quakechart.html kwaks.html quakedata.html oceans.html  ../dbquakes4planet.py ../issrecorder.py ../whereisthis.py ../Planetnotes.txt > ~/git/planetA/spoogit

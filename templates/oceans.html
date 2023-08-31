@@ -1,0 +1,43 @@
+
+
+
+<!-- planetA oceans.html -->
+{% extends "layout.html" %}
+{% block pbody %}
+<div name="msg" id="msg">
+    <P> <font size="3" color="green"> {{ msg }} </font> </P>
+</div>
+<h2>Oceans: testing the reverse geolocation for oceans, used in ISS Tracker</h2>
+<center>                                        
+<table border="1" bgcolor="white">
+    <TR>
+        <TD> <div><canvas id="canv" width="1000" height="500" style="border:1px solid #d3d3d3;"></div></TD>
+        <TD  valign="top">
+            <table border="0" valign="top" bgcolor="white">
+                <TR><TD height="50" valign="top"> &nbsp;</TD></TR>
+                <TR><TD><Button id="oceans"><B>  Oceans, Color-coded  </B></Button><BR>&nbsp;</TD></TR>
+                    <TR><TD>
+                    <form action="/revgeo" method="get">
+                        <B>Reverse Geolocation Lookup:</B>
+                        <BR> Latitude: <input autocomplete="off" name="lat" type="text" value="33.04">
+                        <BR> Latitude: <input autocomplete="off" name="lon" type="text" value="-117.30">
+                        <BR>  <button type="submit"> <B>Lookup</B> </button>
+                    </form>
+                    <TR><TD>
+                        <font size="3" color="green"> {{ session['database'] }} / {{session['activetable']}} </font> 
+                        <BR><button id = "loadv4" style="width:240px;" ><B>Load and Plot Active Quakes Table (constant delay)</B></button>
+                </TD>
+            </table>
+        </TD>
+    </TR>
+</table>
+</center>
+{% endblock %}
+
+{% block foot %}
+<BR> <span id="quakenote"> {{ note }} </span>
+    <BR> <span id="quakemsg"> {{ note }} </span>
+
+    <P> <font size="3" color="green"> {{ session['database'] }} / {{session['activetable']}}  </font> </P>
+{% endblock %}
+<!-- END oceans.html -->

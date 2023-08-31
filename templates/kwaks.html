@@ -1,0 +1,101 @@
+
+
+
+<!-- planetA kwaks.html -->
+{% extends "layout.html" %}
+{% block pbody %}
+<div name="msg" id="msg">
+    <P> <font size="3" color="green"> Animation of sequences of earthquakes. 
+        Datasets are created using dbquakes4planet.py using data from earthquake.usgs.gov 
+        </font> </P>
+</div>
+<H2>Earthquake Sequence Visualization</H2> 
+<span id="flasharea">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {%  for message in messages %}
+             {{ message }}
+          {% endfor %}
+       {% endif %}
+    {% endwith %}
+</span>
+<div id="rawdata"></div>
+<center>
+        <table id="wtf" border="1" bgcolor="white">
+        <TR>
+            <TD style="vertical-align: top;"> <div><canvas id="canv" width="1000" height="500" style="border:1px solid #d3d3d3;"></div></TD>
+            <TD  valign="top">
+                <table border="0" valign="top" bgcolor="white">
+                    <TR>
+                        <TD> 
+                            <table border="0" bgcolor="white"  style="width: 130px;">
+                            <TR><TH> Data&nbsp;Set: </TH> <TD id="databaseAndActiveTable" colspan="3"> {{ session['database'] }} / {{ session['activetable'] }}  </TD></TR>
+                            <tr> <th colspan="1"  style="padding-top: 8px; vertical-align: top;">
+                                    Select&nbsp;a&nbsp;table:  
+                                </th>
+                                <td colspan="3"  style="padding-top: 1px; vertical-align: top;">
+                                    <table><tr><td>
+                                            <select id="kwaktables" name="kwaktables" onchange="loadActiveQuakeTable(this.value)">
+                                            {% for option in kwaktables %}
+                                                <option value="{{ option }}">{{ option }}</option>
+                                            {% endfor %}
+                                            </select>
+                                        </td></tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            </th></tr>
+                            <TR><TH colspan="4" style="vertical-align: top;"> Date&nbsp;Range: </TH> 
+                            <TR><TD style="text-align:right;">From:</TD><TD colspan="3"> <span id="daterangefromPP"></span></TD>
+                            <TR><TD style="text-align:right;">Thru:</TD> <TD colspan="3"> <span id="daterangetoPP"></span> </TD>
+                            <!-- <TR><TD>timdiff</TD> <TD colspan="3"> <span id="timdiff"></span></TD>
+                            <TR><TD>timmin</TD> <TD colspan="3"> <span id="timmin"></span></TD>
+                            <TR><TD>timmax</TD> <TD colspan="3" span id="timmax"></span></TD>  -->
+                            <!-- <TR><TD>temperature</TD> <TD colspan="3"> <span id="temperature"></span></TD> 
+                            <TR><TD>utilization</TD> <TD colspan="3"> <span id="utilization"></span></TD>
+                            <TR><TD>hostname</TD> <TD colspan="3" span id="hostname"></span></TD>  -->
+                            </TR>
+                        </TD>
+                    </TR>
+                    
+                    <TR><Th> Animation<BR>Clip&nbsp;Time: (sec) </Th><TD><input id="cliptime" type=text size=4 value="6"></TD>
+                        <TD> Next&nbsp;Event</TD><TD><span id="quakerow"> </span> </TD>
+                    </TR>
+                    <TR><TD colspan="4" style="text-align: left; padding-top: 16px;"> 
+                        <Button id="nextqevent" style="height:30px;width:100px">Next QEvent</Button> 
+                        <Button id="allqevents" style="height:30px;width:100px">All QEvents</Button> 
+                        </TD> 
+                    </TR>
+                    <TR><TD colspan="4"> 
+                        <form>
+                        <select id="mySelect" size="25" style="width: 330px; font-size:9pt; color: #000fff; font-family: 'Courier New', monospace;">
+                        <item>&nbsp;</item>    
+                        </select>
+                        </form>
+                    </TD></TR>
+                    <TR><TD colspan="4"> <font size="2" color="green">{{ session['database'] }} / {{session['activetable']}} </font></TD></TR>
+                </table>
+            </table>
+        </TD></TR>
+    </table>
+</center>
+<BR> <span id="quakenote"> {{ note }} </span>
+<BR> <span id="quakemsg"> {{ msg }} </span>
+<span class="xHideableDiv"> <button type="button" id="getQEVENTjson" >getQEVENTjson (You can hide this button, don't delete it.) </button> </span>
+{% endblock %}
+
+{% block foot %}
+    <ul>
+    <LI> Earthquakes are represented by dots whose size is scaled based on magnitude.
+    <LI> Time between display of each quake is proportional to actual time interval.
+    <LI> Earthquakes are displayed in chronological order.
+    <LI> The color of the dot highlights the most recent earthquake. 
+        <table>
+            <TR> 
+                <TD bgcolor="#ff0000">Most Recent </TD>
+                <TD bgcolor="#6D4C41"><font color="white">All earlier </font></TD>
+            </TR>
+        </table>
+    </ul>
+ {% endblock %}    
+<!-- END quakechart.html  -->

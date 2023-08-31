@@ -1,0 +1,15 @@
+
+
+
+<!-- planetA greet.html -->
+{% extends "layout.html" %}
+{% block pbody %}
+    <font color=purple size="3"> 
+        <BR>Note: {{note}} 
+    </font>
+    <P>This is a reasonable place to go into greater detail. </P>
+{% endblock %}
+{% block foot %}
+<P> <font size="3" color="green">Session name:{{session['name']}}, {{ session['database'] }} / {{session['activetable']}}  </font> </P>
+{% endblock %}
+<!-- END greet.html -->
