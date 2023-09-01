@@ -23,7 +23,24 @@
 <center>
         <table id="wtf" border="1" bgcolor="white">
         <TR>
-            <TD style="vertical-align: top;"> <div><canvas id="canv" width="1000" height="500" style="border:1px solid #d3d3d3;"></div></TD>
+            <TD style="vertical-align: top;"> 
+                <div><canvas id="canv" width="1000" height="500" style="border:1px solid #d3d3d3;"></div>
+                <div id="quickerThanCSS"> 
+                    <ul>
+                        <LI> Earthquakes are represented by dots whose size is scaled based on magnitude. 
+                        <LI> Time between display of each quake is proportional to actual time interval.
+                        <LI> Earthquakes are displayed in chronological order.
+                        <LI> The color of the dot highlights the most recent earthquake in the selected date range. 
+                            <table>
+                                <TR> 
+                                    <TD bgcolor="#ff0000">Most Recent </TD>
+                                    <TD bgcolor="#6D4C41"><font color="white">All earlier </font></TD>
+                                </TR>
+                            </table>
+                        <LI> <span id="quakemsg"> {{ msg }} </span>
+                    </ul>
+                </div>  
+            </TD>
             <TD  valign="top">
                 <table border="0" valign="top" bgcolor="white">
                     <TR>
@@ -57,7 +74,6 @@
                             </TR>
                         </TD>
                     </TR>
-                    
                     <TR><Th> Animation<BR>Clip&nbsp;Time: (sec) </Th><TD><input id="cliptime" type=text size=4 value="6"></TD>
                         <TD> Next&nbsp;Event</TD><TD><span id="quakerow"> </span> </TD>
                     </TR>
@@ -73,29 +89,16 @@
                         </select>
                         </form>
                     </TD></TR>
-                    <TR><TD colspan="4"> <font size="2" color="green">{{ session['database'] }} / {{session['activetable']}} </font></TD></TR>
+                    <!-- <TR><TD colspan="4"> <font size="2" color="green">{{ session['database'] }} / {{session['activetable']}} </font></TD></TR> -->
                 </table>
             </table>
         </TD></TR>
     </table>
 </center>
 <BR> <span id="quakenote"> {{ note }} </span>
-<BR> <span id="quakemsg"> {{ msg }} </span>
-<span class="xHideableDiv"> <button type="button" id="getQEVENTjson" >getQEVENTjson (You can hide this button, don't delete it.) </button> </span>
+<span class="HideableDiv"> <button type="button" id="getQEVENTjson" >getQEVENTjson (You can hide this button, don't delete it.) </button> </span>
 {% endblock %}
 
 {% block foot %}
-    <ul>
-    <LI> Earthquakes are represented by dots whose size is scaled based on magnitude.
-    <LI> Time between display of each quake is proportional to actual time interval.
-    <LI> Earthquakes are displayed in chronological order.
-    <LI> The color of the dot highlights the most recent earthquake. 
-        <table>
-            <TR> 
-                <TD bgcolor="#ff0000">Most Recent </TD>
-                <TD bgcolor="#6D4C41"><font color="white">All earlier </font></TD>
-            </TR>
-        </table>
-    </ul>
  {% endblock %}    
 <!-- END quakechart.html  -->

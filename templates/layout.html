@@ -27,13 +27,13 @@
             <TD width="15%"><img  id="worldi" src="static/landocean.jpg" width=160 height=90 ></TD>
             <TD width="15%"><img  id="worldq" src="static/blueplates.jpg" width=160 height=90 xstyle="display: none;"></TD>  
             <TD width="100%" style="text-align: top;">
-                <font size="6" color="white"><a href="\">Planet['A']</a> </font> 
+                <font size="6" color="white"><a href="\">Planet['A']</a> Git </font> 
                 <br> <font size="2" color="gray"><em>* There is no Planet['B']</em></font>
                 <table border=0 width="99%">
                     <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
                     <tr> 
                         <td> &nbsp; </td>
-                        <th> <a href="/isschart">ISS TrackeR</a></th>
+                        <th> <a href="/isschart">ISS Tracker</a></th>
                         <th> <a href="/kwaks">Earthquake Sequencer</a> </th>
                         <th> <a href="/quakedata">Raw Earthquake Data</a> </th>
                         <th> <a href="/oceans">Oceans</a> </th>
@@ -44,13 +44,15 @@
             </TD>
         </TR>
     </table>
-    {{ session }}    ==d= {{ session['database']}} / ==t= {{ session['activetable'] }} ==
     <div class="HideableDiv">     
         <button id="latlongrid">Draw Lat/Lon Grid</button>  clicked in ready
     </div>
 
     {% block pbody %}{% endblock %}        
     {% block foot %}{% endblock %}
+    <div class="HideableDiv">
+        {{ session }} d= {{ session['database']}} / t= {{ session['activetable'] }} == 
+    </div>
     </body>
 </html>
 <!-- END layout.html -->

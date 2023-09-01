@@ -10,6 +10,13 @@
     <P>This is a reasonable place to go into greater detail. </P>
 {% endblock %}
 {% block foot %}
+{% if session['name'] != 'Guest' %}
+<pre><P>  {{session}}  </P>
+    {% for k in session.keys() %}
+       {{ k }}     {{ session[k] }}
+    {% endfor %}
+</pre>
 <P> <font size="3" color="green">Session name:{{session['name']}}, {{ session['database'] }} / {{session['activetable']}}  </font> </P>
+{% endif %}
 {% endblock %}
 <!-- END greet.html -->

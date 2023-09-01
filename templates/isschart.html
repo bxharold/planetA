@@ -8,9 +8,6 @@
     <P> <font size="3" color="green"> {{ msg }} </font> </P>
 </div>
 <H2>International Space Station Tracker </H2>
-<BR><button id = "isspathv4" style="width:240px;" ><B>Load and Plot something else (constant delay)</B></button>
-
-
     <center>
     <table border="1" bgcolor="white">
         <TR>
@@ -33,15 +30,18 @@
         </TR>
     </table>
     </center>
-    <BR> note: {{ note }} 
-        <P><button id="getISSjson">Get ISS data as JSON</button>
-            Lat: <span id="f1"> (f1) </span> Lon:<span id="f2"> (f2) </span> 
-        <BR>ISS Data: <span id="issmsg"> {{ oj }} </span>
+    <BR> 
+    {% if session['name'] != 'Guest' %}
+        <BR> {{ note }} 
+        <button id = "isspathv4" style="width:400px;" ><B>Plot a previously recorded ISS path. </B></button>
+    {% endif %}
+    <P><button id="getISSjson">Get ISS data as JSON</button>
+        Lat: <span id="f1"> (f1) </span> Lon:<span id="f2"> (f2) </span> 
+    <BR>ISS Data: <span id="issmsg"> {{ oj }} </span>
     </P> 
     <HR>   
 {% endblock %}
 
 {% block foot %}
-    note: 7/5/2023 Nominatim was timing out... it was temporary. Don't panic. 
 {% endblock %}
 <!-- END isschart.html -->

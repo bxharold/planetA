@@ -15,7 +15,6 @@
         <TD  valign="top">
             <table border="0" valign="top" bgcolor="white">
                 <TR><TD height="50" valign="top"> &nbsp;</TD></TR>
-                <TR><TD><Button id="oceans"><B>  Oceans, Color-coded  </B></Button><BR>&nbsp;</TD></TR>
                     <TR><TD>
                     <form action="/revgeo" method="get">
                         <B>Reverse Geolocation Lookup:</B>
@@ -23,10 +22,14 @@
                         <BR> Latitude: <input autocomplete="off" name="lon" type="text" value="-117.30">
                         <BR>  <button type="submit"> <B>Lookup</B> </button>
                     </form>
+                    <TR><TD height="1" valign="top"> &nbsp;</TD></TR>
                     <TR><TD>
-                        <font size="3" color="green"> {{ session['database'] }} / {{session['activetable']}} </font> 
                         <BR><button id = "loadv4" style="width:240px;" ><B>Load and Plot Active Quakes Table (constant delay)</B></button>
+                        <BR><font size="3" color="green"> {{ session['database'] }} / {{session['activetable']}} </font> 
                 </TD>
+                <TR><TD height="20" valign="top"> &nbsp;</TD></TR>
+                <TR><TD><Button id="oceans"><B>  Oceans, Color-coded  </B></Button>
+                    <BR>Note, the color is only meaningful<BR>when lat, lon are over an ocean.>&nbsp;</TD></TR>
             </table>
         </TD>
     </TR>

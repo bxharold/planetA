@@ -6,18 +6,14 @@
 {% block pbody %}
     <H2>PlanetA start page. </H2>
     <form action="/greet" method="get">
+        <P>Click "New Session" to run as Guest. For debugging diagnostics, log in as anything else.</P>
         <input autocomplete="off" autofocus name="name" placeholder="Name" type="text">
-        <button type="submit">New Flask Session (?)</button>
+        <button type="submit">New Session</button>
     </form>
 {% endblock %}
 {% block foot %}
-<font size="3" color="green">  {{ session['database'] }} / {{session['activetable']}} </font> 
-poodle.
-<pre><P>  {{session}}  </P>
-    {% for k in session.keys() %}
-       {{ k }}     {{ session[k] }}
-    {% endfor %}
-</pre>
-
+'''
+lsof -iTCP -sTCP:LISTEN -n -P
+'''
 {% endblock %}
 <!-- END index.html  -->
