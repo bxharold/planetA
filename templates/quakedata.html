@@ -47,9 +47,8 @@
         <HR>
 {% endblock %}
 {% block foot %}
-
 {% if session['name'] != 'Guest' %}
-    <font size="3" color="green">  {{ session['database'] }} / {{session['activetable']}} </font>
+    <font size="3" color="green">  {{ session['database'] }} / {{session['activetable']}} </font> 
 {% endif %}
 {% endblock %}
 <!-- END quakedata.html -->

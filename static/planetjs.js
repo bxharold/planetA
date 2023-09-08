@@ -1,8 +1,7 @@
 
 
 //   planetjs.js  for isschart.html and quakechart.html
-QPORT =  "http://127.0.0.1:5055"    // new quandary, so sad
-QPORT =  "http://192.168.1.13:5055"    // new quandary, so sad
+QPORT = "{{QPORT}}"    // provided by planetA.py
 
 wm = {
     imwid : 1000, imht : 500,
@@ -33,6 +32,7 @@ async function loadActiveQuakeTable(name) {
     })
     .done(function() {
         console.log( "loadActiveQuakeTable complete" );
+        $("#databaseAndActiveTable").text("loaded "+ name)
     });
     await delay(200)
     endpoint = QPORT+"/loadActiveQuakeTableParams?tablename="+name
@@ -111,7 +111,7 @@ function updateLocation(dd) {     // ISS
     ctx.font = "10px Arial";
     a = lon2x(dd['iss_position']['longitude'])
     b = lat2y(dd['iss_position']['latitude'])
-    ctx.fillRect(a, b, 3, 5);  
+    ctx.fillRect(a, b, 3,8);  
     $("#timestamp").html(dd['timestamp'])
     $("#nicedate").html(dd['nicedate'])
     $("#latitude").html(dd['iss_position']['latitude'])
@@ -127,7 +127,7 @@ function drawISSdot(x) {     // ISS   tim,lat,lon,nicedate,loc
     ctx.font = "10px Arial";
     a = lon2x(x[2])
     b = lat2y(x[1])
-    ctx.fillRect(a, b, 3, 5);  
+    ctx.fillRect(a, b, 3, 8);  
     $("#timestamp").html(x[0])
     $("#nicedate").html(x[3])
     $("#latitude").html(x[1])
@@ -155,23 +155,24 @@ $("#loadv4").click( function() {  // dev only, invoked by oceans. async not need
             qev = qevent[i]
             $("#quakemsg").html(JSON.stringify(qev))  
             // console.log(qev)
-            $("#quakenote").html("// stringify is used to display the passed value of qev.<BR>" 
-                 + "// qev is already a JS object, so it can be dereferenced. ")
+            // stringify is used to display the passed value of qev.
+            // qev is already a JS object, so it can be dereferenced. 
             quakeLocation(qev[3], qev[4],"#ff00ff", qev[2] )
         }
     });
 })
 
-$("#isspathv4").click( function() {  // dev only.
+$("#isspathv4").click( function() { // Dev. Used to test JS await-promise based animation.
     refresh_map_image('worldi') 
     endpoint=QPORT+"/get_isspath_JSON"  // a list of lists, array[11], but not a dict
     $.getJSON(endpoint,   async  function(x) {  // async is needed here for the await
         let qevent = JSON.stringify(x)   // a string
-        qevent = JSON.parse(qevent)   // an array, the same as before...
-        // console.log(qevent == x, typeof qevent, typeof x)  // ... false, object, object.
-        // console.log("qevent, after JSON.parse(qevent)", typeof qevent, "!", qevent)
+        qevent = JSON.parse(qevent)   
+        delaytime = 30; 
+        if (document.getElementById('goslow').checked)  {
+            delaytime = 500;  
+        }
         for (i=0; i<qevent.length; i++) {
-            delaytime = 50;   // constant time intervals
             await delay(delaytime);  // gorks unless $.getJSON's function is async
             qev = qevent[i]
             $("#issmsg").html(JSON.stringify(qev))  
@@ -227,13 +228,7 @@ $("#nextqevent").click( function() {
     quakerow = $("#quakerow").text() 
     // dd = [1, 1679..., 7.5, 33.0, -117.3, 3.0, 'Encinitas, CA', '2023...', -10, '23:59:50']
     // id tim mag lat lon dep loc datepp deltat deltat(hms)    
-    // 0   1   2   3   4   5   6     7      8     9
     dd = rowsplus[quakerow]
-    // postpendToSelectList("mySelect", dd[0], dd[7], dd[6], dd[2] )
-    // firstDot = quakerow < (kwparams['rowCount']-2)
-    // console.log(quakerow, firstDot, kwparams['rowCount']-1)
-    // -   -   -   -   -   -   -   -  ?? event 0 is drawn but not displayed in mySelect
-    //                                 when I fix that, the yellow/brown semi-fails
     if(quakerow>=0) { 
         postpendToSelectList("mySelect", dd[0], dd[7], dd[6], dd[2] )
         console.log(quakerow)
@@ -241,14 +236,14 @@ $("#nextqevent").click( function() {
             lat = rowsplus[quakerow][3]
             lon = rowsplus[quakerow][4]
             mag = rowsplus[quakerow][2]
-            quakeLocation(lat, lon, "#6D4C41", mag)   // brown  6D4C41
+            quakeLocation(lat, lon, "#6D4C41", mag)   // brown 
         }
         if ( quakerow > 0) 
         { // paint it bright
             lat = rowsplus[quakerow-1][3]
             lon = rowsplus[quakerow-1][4]
             mag = rowsplus[quakerow-1][2]
-            quakeLocation(lat, lon, "#ff0000", mag)  // yellow  ffff00  pink ff33ff
+            quakeLocation(lat, lon, "#ff0000", mag)  // red
         }
         quakerow -= 1
         $("#quakerow").text(quakerow)
@@ -301,6 +296,7 @@ function oceanDot(lat, lon, color, txt) {   // only used for calibration/testing
 function getOceanColor(lat,lon){
     // http://127.0.0.1:5000/oceancolor?lat=60&lon=137
     endpoint=QPORT+"/oceancolor?lat="+lat+"&lon="+lon
+    console.log("=="+QPORT+"=="+endpoint+"==")
     dd = $.getJSON(endpoint, function(x) {
         dd = JSON.stringify(x) // {"code":"spac","color":"#ffff66","name":"South Pacific"}
         dd = JSON.parse(dd)
@@ -310,7 +306,7 @@ function getOceanColor(lat,lon){
 
 async function oceansLoop() {   // used to test "await delay"
     for ( i = -45; i <= 45; i+=45) { for ( j = -180; j <= 180; j+=45) {
-    //for ( i = -45; i <= 45; i+=22.5) { for ( j = -180; j <= 180; j+=22.5) {
+    // for ( i = -67.5; i <= 67.5; i+=22.5) { for ( j = -180; j <= 180; j+=22.5) {
     // for ( i = -55; i <= 65; i+=5) { for ( j = -150; j <= 180; j+=7) {
             dd = getOceanColor(i,j)
             await delay(10 + Math.random()*100 ) 

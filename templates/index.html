@@ -4,16 +4,17 @@
 <!-- planetA index.html -->
 {% extends "layout.html" %}
 {% block pbody %}
-    <H2>PlanetA start page. </H2>
-    <form action="/greet" method="get">
-        <P>Click "New Session" to run as Guest. For debugging diagnostics, log in as anything else.</P>
+    <H1>PlanetA </H1>
+    <h2>A browser-based graphical display that shows, in compressed time, 
+        the locations and relative magnitudes of earthquakes.   </h2>
+    <h3>This a full-stack app using Python, Flask, Sqlite and Javascript, developed as my CS50p final project. </h3>
+        <form action="/greet" method="get">
+        <P>Click "New Session" to run as Guest. For extended functionality and diagnostics, log in as anything else.</P>
         <input autocomplete="off" autofocus name="name" placeholder="Name" type="text">
         <button type="submit">New Session</button>
     </form>
+    <div style="height:300px"></div>
 {% endblock %}
 {% block foot %}
-'''
-lsof -iTCP -sTCP:LISTEN -n -P
-'''
 {% endblock %}
 <!-- END index.html  -->

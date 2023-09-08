@@ -70,3 +70,25 @@ for i in range(1 * 92 * 3):  # orbits * minutes/orbit * samples/minute`
     fullCurrentLocation(i)
     time.sleep(20)
 
+"""
+#### I plan to hard-code the table, maybe block it from the "list tables"
+# demo file:   isspath-americas.csv
+
+.mode csv
+DROP TABLE IF EXISTS "isspath";
+CREATE TABLE IF NOT EXISTS "isspath" ( 
+    -- id INTEGER PRIMARY KEY,  -- use builtin rowid instead
+    tim INTEGER, 
+    lat REAL,
+    lon REAL,
+    nicedate TEXT,
+    loc varchar(20)
+);
+.import isspath.csv isspath
+.mode columns
+select * from isspath;
+select count(*) from isspath;
+-- select * from isspath order by rowid desc;
+
+"""
+

@@ -5,18 +5,31 @@
 {% extends "layout.html" %}
 {% block pbody %}
     <font color=purple size="3"> 
-        <BR>Note: {{note}} 
+        <BR>{{note}} 
     </font>
-    <P>This is a reasonable place to go into greater detail. </P>
+    <P>
+        <H3>Earthquake Sequencer:</H3>
+        <P>Displays an animation of locations, magnitudes, and time intervals of a set of earthquakes. 
+            <BR> The UI presents a pulldown list of all available tables that were created by the earthquake data aggregator app, 'dbquakes4planet.py'.
+        </P>
+        
+        <H3> ISS Tracker: </H3>
+        <P>This displays the location of the International Space Station in real time, with an update every 5 seconds.
+        <BR> Also displays the name of the state, country or ocean that ISS is currently over.
+        <BR>In non-Guest (dev) mode, ISS Tracker offers the option of displaying a recorded path.</P>
+
+        <div style="height:20px"></div>
+         <!-- https://beautifycode.net/markdown-to-html -->
+        <span style="background-color: #4CAF50; padding: 10px; border: 2px solid #000000;" >
+            <!-- View the <a href="static/readme.html"> README </a> file  -->
+            View the <a href="static/readme.html" target="iframe_a"> README </a> file 
+        </span>
+        <P>
+        <iframe src="" name="iframe_a" height="400px" width="80%" ></iframe>
+    </P>
 {% endblock %}
 {% block foot %}
-{% if session['name'] != 'Guest' %}
-<pre><P>  {{session}}  </P>
-    {% for k in session.keys() %}
-       {{ k }}     {{ session[k] }}
-    {% endfor %}
-</pre>
+<div style="height:10px"></div>
 <P> <font size="3" color="green">Session name:{{session['name']}}, {{ session['database'] }} / {{session['activetable']}}  </font> </P>
-{% endif %}
 {% endblock %}
 <!-- END greet.html -->

@@ -7,7 +7,7 @@
 <div name="msg" id="msg">
     <P> <font size="3" color="green"> {{ msg }} </font> </P>
 </div>
-<h2>Oceans: testing the reverse geolocation for oceans, used in ISS Tracker</h2>
+<h2>Oceans: testing canvas animation and the reverse geolocation used in ISS Tracker</h2>
 <center>                                        
 <table border="1" bgcolor="white">
     <TR>
@@ -15,32 +15,33 @@
         <TD  valign="top">
             <table border="0" valign="top" bgcolor="white">
                 <TR><TD height="50" valign="top"> &nbsp;</TD></TR>
-                    <TR><TD>
-                    <form action="/revgeo" method="get">
-                        <B>Reverse Geolocation Lookup:</B>
-                        <BR> Latitude: <input autocomplete="off" name="lat" type="text" value="33.04">
-                        <BR> Latitude: <input autocomplete="off" name="lon" type="text" value="-117.30">
-                        <BR>  <button type="submit"> <B>Lookup</B> </button>
-                    </form>
-                    <TR><TD height="1" valign="top"> &nbsp;</TD></TR>
-                    <TR><TD>
-                        <BR><button id = "loadv4" style="width:240px;" ><B>Load and Plot Active Quakes Table (constant delay)</B></button>
-                        <BR><font size="3" color="green"> {{ session['database'] }} / {{session['activetable']}} </font> 
+                <TR><TD>
+                <form action="/revgeo" method="get">
+                    <B>Reverse Geolocation Lookup:</B>
+                    <BR> Latitude: <input autocomplete="off" name="lat" type="text" value="33.04">
+                    <BR> Latitude: <input autocomplete="off" name="lon" type="text" value="-117.30">
+                    <BR> <button type="submit"> <B>Lookup</B> </button> (JSON output) 
+                </form>
+                <TR><TD height="20" valign="top"> &nbsp;</TD></TR>
+                <TR><TD>
+                    <button id = "loadv4" style="width:240px;" ><B>Load and Plot Active Quakes Table (constant delay)</B></button>
+                    <BR><font size="3" color="green"> {{ session['database'] }} / {{session['activetable']}} </font> 
                 </TD>
                 <TR><TD height="20" valign="top"> &nbsp;</TD></TR>
-                <TR><TD><Button id="oceans"><B>  Oceans, Color-coded  </B></Button>
-                    <BR>Note, the color is only meaningful<BR>when lat, lon are over an ocean.>&nbsp;</TD></TR>
-            </table>
+                <TR><TD><Button id="oceans"><B>  Ocean Codes, Color-coded  </B></Button>
+                    <BR>Note, The color is only meaningful <BR> when lat, lon are over an ocean.</TD></TR>
+                </table>
         </TD>
     </TR>
 </table>
 </center>
-{% endblock %}
+{% endblock %} 
 
 {% block foot %}
-<BR> <span id="quakenote"> {{ note }} </span>
+    <BR> <span id="quakenote"> {{ note }} </span>
     <BR> <span id="quakemsg"> {{ note }} </span>
-
-    <P> <font size="3" color="green"> {{ session['database'] }} / {{session['activetable']}}  </font> </P>
+    {% if session['name'] != 'Guest' %}
+        <P> <font size="3" color="green"> {{ session['database'] }} / {{session['activetable']}}  </font> </P>
+    {% endif %}
 {% endblock %}
 <!-- END oceans.html -->

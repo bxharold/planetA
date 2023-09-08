@@ -5,7 +5,6 @@ geopy_test.py
     uses the reverse geocoding feature of the GeoPy library in Python to 
     find the nearest country, state, or ocean given a latitude and longitude, 
     The Nominatim geocoder is a free, open-source API provided by OpenStreetMap. 
-    Refer to whereisthis.py for development notes.
 Environment:
     python3  -m venv venv
     source venv/bin/activate

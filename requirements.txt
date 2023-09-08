@@ -1,4 +1,5 @@
 Flask
 geopy
 requests
+pytest
 

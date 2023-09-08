@@ -1,60 +1,10 @@
 #!/usr/local/bin/python3
-# planetA.py  is a full-stack Flask app.  I'll let Chat-GPT write a full blurb.
-#    66planetA is the session version that worked on mac but glitched on rpi.
-#    egrep -n "^@ap|^def" planetA.py > defs
-#    7/25/2023, reordering functions before printing. 
-#    dropping post route in index.
-#    removed param name=session['name'], passed to greet -- ??
-#    found typo (acivetable), reordered
-#
-# The project planetA has 3 compomnents: earthquake display, ISS tracker,
-# and a data aggregator utility "dbquakes4planet.py"
-# The display for earthquakes and ISS is an HTML canvas.
-
-# Earthquake visualizer:
-# This displays locations, magnitudes, and time intervals of a set of earthquakes.
-# "dbquakes4planet.py" retrieves earthquake data extracts from USGS, and stores
-# the info (with additional calculated columns) in a sqlite database "quakes.db".
-
-# In the browser, I use javascript to scale and schedule the animation,
-# based on the time difference between successive earthquake events.
-
-# The /loadActiveQuakeTable route retrieves the earthquake events from the
-# local backend, and returns a JSON response. The browser intializes a global
-# javascript object with this, and getJSON's the /loadActiveQuakeTableParams
-# route to returns parameters that govern the display.
-
-# ISS Tracker:
-# This displays the location of the International Space Station.
-#
-# The route /issdata accesses the api.open-notify.org/iss-now.json API which
-# provides the latitude/longitude. It then uses the nominatim API for
-# reverse geolocation, which maps lat/lon to a country or ocean. I added
-# a route to drill down to (approx) the specific ocean.
-#
-# Development Notes:
-# ISS Tracker was written to better familiarize myself with the Flask API
-# programming model (consuming and creating APIs.)  The animation requirements
-# were quite simple: Every 5 seconds, get a location, draw a dot, repeat.
-# HTML canvas and javascript's setInterval() were very appropriate for the
-# realtime display updates.
-
-# Earthquakes added a backend database, and more API endpoints. Animation
-# was more complicated -- I wanted an explicit "delay" in javascript that
-# enabled the DOM updates to occur within a javascript loop. I used the
-# async/await/promise approach for this.
-
-# 7/7/2023: Animation is working. Scaled deltat is now wired in.
-# Can't switch between worldi and worldq images yet. The names are in a static file.
-# I have to set the localhost port from hard-coded 5000 to QPORT manually in both planetA.py and planetjs.js
-
-# cat ../planetA.py ../static/planetjs.js layout.html index.html greet.html isschart.html quakechart.html kwaks.html 
-# quakedata.html oceans.html ../whereisthis.py ../dbquakes4planet.py ../issrecorder.py ../Planetnotes.txt > ../spoo721
+# planetA.py  CS50p final project. Full-stack Flask app.  See README.md
 
 from flask import Flask, jsonify, render_template, request, redirect, session, url_for, flash
 import sqlite3
 from sqlite3 import Error
-import datetime, json, requests, os, subprocess, time, re, random
+import datetime, json, requests, os, subprocess, time, re, random, sys, socket
 from geopy.geocoders import Nominatim
 
 app = Flask(__name__)
@@ -131,18 +81,17 @@ def listTables():
             conn.close()
     return rv
 
+@app.route("/readme", methods=["GET"])
+def readme():
+    return render_template("README.md")
+
+
 
 #############  index, sessions  #############################################
 
 @app.route("/")
 def index():
-    # print("index")
-    # session['database'] = "quakes.db"
-    # session['activetable'] = "colortest"
-    # session['name'] = ""
-    # session['note'] = ""
-    # session.modified = True
-    # return render_template("index.html")
+    QPORT = f"http://{request.headers.get('Host')}"
     return redirect('/clearsession')
 
 @app.route("/greet", methods=["GET"])
@@ -153,7 +102,8 @@ def greet():
     note = f"new session for {session['name']} at {datetime.datetime.now().strftime('%X')}"
     session['note'] = note
     session.modified = True
-    return render_template("greet.html", note=note)
+    QPORT = f"http://{request.headers.get('Host')}"
+    return render_template("greet.html", note=note, QPORT=QPORT)
 
 @app.route("/clearsession", methods=["GET", "POST"])
 def clearsession():
@@ -162,14 +112,16 @@ def clearsession():
     session['database'] = "quakes.db"
     session['activetable'] = ""
     session.modified = True
-    return render_template("index.html")
-    # return redirect('/')
+    QPORT = f"http://{request.headers.get('Host')}"
+    print(QPORT)
+    return render_template("index.html", QPORT=QPORT)
 
 @app.route("/table", methods=["GET"])
 def table():
     session['activetable'] = request.args['t']
     session.modified = True
-    return render_template("index.html")
+    QPORT = f"http://{request.headers.get('Host')}"
+    return render_template("index.html", QPORT=QPORT)
     # return redirect('/')
 
 #############  iss   ###################################################
@@ -205,8 +157,10 @@ def isschart():
     print (oj['timestamp'])
     print (oj['nicedate'])
     print (oj['iss_position']['latitude'], oj['iss_position']['longitude'])
+    QPORT = f"http://{request.headers.get('Host')}"
+    print(QPORT)
     return render_template("isschart.html", msg=msg, img=worldmap,
-                name=session['name'], note=session['note'], oj=oj)
+                name=session['name'], note=session['note'], oj=oj, QPORT=QPORT)
 
 #############  quakes  ###################################################
 
@@ -291,12 +245,13 @@ def kwaks():
     msg = "Use external app dbquakes4planet.py to create additonal tables. "
     kwaktables = listTables()
     kwaktables.insert(0,"Select...")
-    return render_template("kwaks.html", msg=msg, kwaktables=kwaktables, img='worldq')
+    QPORT = f"http://{request.headers.get('Host')}"
+    return render_template("kwaks.html", msg=msg, kwaktables=kwaktables, img='worldq', QPORT=QPORT)
 
 @app.route("/quakedata", methods=["GET", "POST"])
 def quakedata():
     if session['activetable'] == "":
-        msg="Select a table. "
+        msg=">>> Select a table."
         flash(f"{msg}")
         return redirect('/kwaks')
     else:
@@ -305,7 +260,8 @@ def quakedata():
             Parsed geojson data stored locally in sqlite: "
         # the row indices in the response depend on the ordering.  IDs are 15,16.
         # flash(f"quakedata: {session['activetable']}") # flash is more trouble than it's worth
-        return render_template("quakedata.html", msg=msg, rows=rowsplus, img='worldq')
+        QPORT = f"http://{request.headers.get('Host')}"
+        return render_template("quakedata.html", msg=msg, rows=rowsplus, img='worldq', QPORT=QPORT)
 
 def kwakParams(table):  # returns dict.
     try:
@@ -383,14 +339,11 @@ def get_isspath_JSON():
     oj.headers.add('Access-Control-Allow-Origin', '*')
     return oj
 
-def get_isspath():
+def get_isspath():  # isspath-americas goes over the US and SA
     dbconn = create_connection(session['database'])
     cur = dbconn.cursor()
-    cur.execute(f"SELECT * FROM 'isspath' ORDER BY rowid")
+    cur.execute(f"SELECT * FROM 'isspath' ORDER BY rowid") 
     # rowid  tim lat lon nicedate loc
-    # rowsplus = []   # # srsly?
-    # for row in cur:
-    #     rowsplus.append(row)
     rowsplus = cur.fetchall()
     return rowsplus
 
@@ -505,11 +458,13 @@ def oceancolormap(lat,lon):
 @app.route("/oceans", methods=["GET"])
 def oceans():
     msg = "This route is used to test reverse geolocation code for ocean locations."
-    return render_template("oceans.html" , msg=msg, img='worldi')
-
+    QPORT = f"http://{request.headers.get('Host')}"
+    print(f"-->QPORT={QPORT}=")
+    return render_template("oceans.html" , msg=msg, img='worldi', QPORT=QPORT)
 
 if __name__ == "__main__":
-    QPORT = 5055
-    app.run(host="0.0.0.0", port=QPORT, debug=True)
+    if len(sys.argv) != 2:
+        sys.exit(f"usage: {sys.argv[0]}  [port#]\n")
+    app.run(host="0.0.0.0", port=sys.argv[1], debug=True)
 
 # END planetA.py   ---o---     ---o---     ---o---     ---o---     ---o---

@@ -6,7 +6,7 @@
 <html lang="en">
     <head>
         <meta name="viewport" content="initial-scale=1, width=device-width">
-        <title>plaNetA</title> 
+        <title>planetA</title> 
         <script> "use strict" </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <link rel="stylesheet" href="{{ url_for('static', filename='planetstyle.css') }}">
@@ -22,6 +22,7 @@
         </script> 
     </head>
     <body>
+    <script> QPORT = "{{QPORT|safe}}"; /* alert(QPORT)  gotta be in body */ </script> 
     <table border=0 cellspacing=0 cellpadding="10" width="100%">
         <TR bgcolor="black" color="white" valign="top">
             <TD width="15%"><img  id="worldi" src="static/landocean.jpg" width=160 height=90 ></TD>
@@ -53,6 +54,8 @@
     <div class="HideableDiv">
         {{ session }} d= {{ session['database']}} / t= {{ session['activetable'] }} == 
     </div>
+    planetA.py  Flask server is running on {{QPORT|safe}}
+    <P>    &copy; Harold Finz, 2023    </P>
     </body>
 </html>
 <!-- END layout.html -->
