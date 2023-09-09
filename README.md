@@ -1,6 +1,6 @@
 # Project:  PlanetA  
 #### Video Demo:  <URL HERE>
-#### Description: `PlanetA` is a full-stack Flask app that uses Python, Sqlite and Javascript to implement a browser-based graphical display that shows, in compressed time, the locations and relative magnitudes of earthquakes.  It can also display the location of the International Space Station (ISS). 
+#### Description: `PlanetA` is a full-stack Flask app that uses Python, Sqlite and Javascript to implement a browser-based graphical display that shows, in compressed time, the locations and relative magnitudes of earthquakes.  It also has the option to display the path (in real time) of the International Space Station (ISS). 
 
 ## PlanetA has 3 components: 
   1. Earthquake sequence visualization 
