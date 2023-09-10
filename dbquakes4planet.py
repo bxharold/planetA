@@ -21,13 +21,37 @@ def validCommandLine(startdate, enddate, table_name):
     # x = re.findall(r"^20\d\d-\d\d-\d\d$", startdate)
     # if  not x:
     #     return "Invalid startdate"
-    if not re.findall(r"^20\d\d-\d\d-\d\d$", startdate):
-        return f"Invalid startdate {startdate}"
-    if not re.findall(r"^20\d\d-\d\d-\d\d$", enddate):
-        return f"Invalid enddate {enddate}"
+    rv = 0
+    #if not (g := re.findall(r"^20\d\d-(\d\d)-(\d\d)$", startdate) ):
+    g = re.findall(r"^20\d\d-(\d\d)-(\d\d)$", startdate)
+    if not g:
+        print(f"Invalid startdate {startdate}")
+        return 1
+    print(f" ---- {table_name } ------ { g[0] }    { g[0][0] }  { g[0][1] }")
+    if int(g[0][0]) < 1 or int(g[0][0])>12:
+        print(f"Invalid start month {startdate}  { g[0][0] }")
+        return 101
+    if int(g[0][1]) < 1 or int(g[0][1])>31:
+        print(f"Invalid start day of month {startdate}   { g[0][1] }")
+        return 102
+
+    #if not (g := re.findall(r"^20\d\d-(\d\d)-(\d\d)$", enddate) ):
+    g = re.findall(r"^20\d\d-(\d\d)-(\d\d)$", enddate)
+    if not g:
+        print(f"Invalid enddate {enddate}")
+        return 2
+    print(f" ---- {table_name } ------ { g[0] }    { g[0][0] }  { g[0][1] }")
+    if int(g[0][0]) < 1 or int(g[0][0])>12:
+        print(f"Invalid start month {enddate}  { g[0][0] }")
+        return 201
+    if int(g[0][1]) < 1 or int(g[0][1])>31:
+        print(f"Invalid start day of month {enddate}   { g[0][1] }")
+        return 202
+
     if not re.findall("^[a-zA-Z_]{2}[0-9_]+$", table_name):
-        return f"Table Name '{table_name}' is not to my liking."
-    return ""
+        print(f"Table Name '{table_name}' is not to my liking.")
+        return 3
+    return 0
 
 def createQueryString(startdate, enddate):
     return f"https://earthquake.usgs.gov/fdsnws/event/1/query.geojson?starttime={startdate}%2000:00:00&endtime={enddate}%2023:59:59&minmagnitude=4.5&orderby=time"
