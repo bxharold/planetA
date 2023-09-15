@@ -2,31 +2,27 @@
 
 def main():
     msg = """
-The real project is planetA.py, a Flask app, and dbquakes4planet.py, 
-but the cs50p reqts (for pytest) require a fixed structure (see below)
-that call for a pytest-testable "project.py"
+My CS50p project consists of 2 components" planetA.py, a Flask app, and 
+dbquakes4planet.py, a data retriever/aggregator. The cs50p reqts call for 
+a pytest-testable "project.py" in a specific format. (See below.)
 
 To that end, 3 functions in planetA.py (a Flask app), and dbquakes4planet.py 
-have been copied here. In the "real" program files, their names have been
-prefixed with "REFACTORED_TO_project_py__" and the functions are imported
-from this "project.py" file.
-
-                              AT LEAST THAT'S MY HOPE.
+have been copied here (project.py). In the "real" program files, their 
+names have been prefixed with "REFACTORED_TO_project_py__" and the 
+functions are imported from this "project.py" file.
 
 My original view of this project was a web app, using Flask and Javascript,
 to create an animated display of earthquakes.  Historical earthquake data is 
 available, but for sanity's sake, I made a local copy (with added columns)
 and that data drove the animation.  
 
-In other words, 2 components -- the web app, and a downloader utility.
-
 But, rules as they are, the "project" needs a "main" and functions which 
 can be pytest'ed.  Sad to say, even in my local environment, I couldn't 
 get pytest to find the external libraries I used (geopy). Forget about 
 trying to configure my environment under CS50p's Docker! 
 
-Functionally, this "project.py" is place to put some utility functions.
-planetA.py and dbquakes4planet.py are still the real project. They can
+Functionally, this "project.py" is a place to put some utility functions.
+PlanetA.py and dbquakes4planet.py are still the real project. They can
 both import the 3 functions here, and they can all run as designed.
 
     """

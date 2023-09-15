@@ -10,7 +10,7 @@
      - command-line program generating Sqlite tables for the earthquake sequence visualization component
 
 ## USGS earthquake data aggregator:
-`dbquakes4planet.py` is a command-line utility that pulls earthquake event data within a specified data range from the online USGS database. It stores extracts (with additional calculated columns to handle the earthquake animation) in tables in a Sqlite database `quakes.db`.
+`dbquakes4planet.py` is a command-line program that pulls earthquake event data within a specified data range from the online USGS database. It stores extracts (with additional calculated columns to handle the earthquake animation) in tables in a local Sqlite database `quakes.db`.
 
 ## Earthquake visualizer:
 The browser front-end displays an animation of locations, magnitudes, and time intervals of a set of earthquakes. The UI presents a pulldown list of all available tables that were created by the earthquake data aggregator app, `dbquakes4planet.py`.
