@@ -236,7 +236,8 @@ $("#nextqevent").click( function() {
             lat = rowsplus[quakerow][3]
             lon = rowsplus[quakerow][4]
             mag = rowsplus[quakerow][2]
-            quakeLocation(lat, lon, "#6D4C41", mag)   // brown 
+            // quakeLocation(lat, lon, "#6D4C41", mag)   // brown 
+            quakeLocation(lat, lon,    "#000000", mag)   // black 
         }
         if ( quakerow > 0) 
         { // paint it bright

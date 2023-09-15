@@ -6,10 +6,23 @@ import sqlite3
 from sqlite3 import Error
 import datetime, json, requests, os, subprocess, time, re, random, sys, socket
 from geopy.geocoders import Nominatim
+from project import oceancolormap  # CS50p/pytest change.
 
 app = Flask(__name__)
 app.secret_key = "any random string"
 worldmap = 'worldi'
+
+def hostIP():
+  hn = ([l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0])
+  print("one-liner: ", hn)  # food for thought!
+  return hn
+
+# running locally, 
+host_ip = hostIP()
+QPORT = f"http://{host_ip}:5000/"
+# on CS50's Docker, I have to specify QPORT explicitly:
+# QPORT = "https://bxharold-code50-28027098-gxw7wp4pgvw2ppq5.github.dev/"
+
 
 def create_connection(db_file):
     conn = None
@@ -43,28 +56,13 @@ def cpu_temp(vhostname):
 def hostname():
   dev = os.popen("hostname")
   hn = dev.read()
-  return hn.strip()
-
-def countstar(table):
-    try:
-        conn = create_connection(session['database'])
-        cursor = conn.cursor()
-        # sql = f"SELECT count() FROM '{table}';"
-        cursor.execute( "SELECT count() FROM ?;", table)
-        rv = cursor.fetchone()
-        rv = rv[0]
-    except sqlite3.Error as error:
-        print(f"Failed to execute countstar", error)
-    finally:
-        if conn:
-            conn.close()
-    return rv
+  return hn.strip()  
 
 def listTables():
     print("listTables --- ", session)
     try:
         conn = create_connection(session['database'])
-        sql_query = """SELECT name FROM sqlite_master WHERE type='table';"""  #     gotta block isspath
+        sql_query = """SELECT name FROM sqlite_master WHERE type='table' AND name not like 'isspath';"""  
         print(session['database'], sql_query)
         cursor = conn.cursor()
         cursor.execute(sql_query)
@@ -91,7 +89,7 @@ def readme():
 
 @app.route("/")
 def index():
-    QPORT = f"http://{request.headers.get('Host')}"
+    # QPORT = f"http://{request.headers.get('Host')}"
     return redirect('/clearsession')
 
 @app.route("/greet", methods=["GET"])
@@ -102,7 +100,7 @@ def greet():
     note = f"new session for {session['name']} at {datetime.datetime.now().strftime('%X')}"
     session['note'] = note
     session.modified = True
-    QPORT = f"http://{request.headers.get('Host')}"
+    # QPORT = f"http://{request.headers.get('Host')}"
     return render_template("greet.html", note=note, QPORT=QPORT)
 
 @app.route("/clearsession", methods=["GET", "POST"])
@@ -112,7 +110,7 @@ def clearsession():
     session['database'] = "quakes.db"
     session['activetable'] = ""
     session.modified = True
-    QPORT = f"http://{request.headers.get('Host')}"
+    # QPORT = f"http://{request.headers.get('Host')}"
     print(QPORT)
     return render_template("index.html", QPORT=QPORT)
 
@@ -120,7 +118,7 @@ def clearsession():
 def table():
     session['activetable'] = request.args['t']
     session.modified = True
-    QPORT = f"http://{request.headers.get('Host')}"
+    # QPORT = f"http://{request.headers.get('Host')}"
     return render_template("index.html", QPORT=QPORT)
     # return redirect('/')
 
@@ -132,7 +130,7 @@ def issdata():
     obj = requests.get("http://api.open-notify.org/iss-now.json")
     oj = obj.json()   # <class 'dict'> -- so I can add to it.
     oj["nicedate"] = niceDate(oj['timestamp'])
-    vhostname = hostname()
+    vhostname = hostIP()  # hostname()
     oj['temperature'] = cpu_temp(vhostname)
     oj['hostname'] = vhostname
     oj['utilization'] = cpu_util()
@@ -157,7 +155,7 @@ def isschart():
     print (oj['timestamp'])
     print (oj['nicedate'])
     print (oj['iss_position']['latitude'], oj['iss_position']['longitude'])
-    QPORT = f"http://{request.headers.get('Host')}"
+    # QPORT = f"http://{request.headers.get('Host')}"
     print(QPORT)
     return render_template("isschart.html", msg=msg, img=worldmap,
                 name=session['name'], note=session['note'], oj=oj, QPORT=QPORT)
@@ -245,7 +243,7 @@ def kwaks():
     msg = "Use external app dbquakes4planet.py to create additonal tables. "
     kwaktables = listTables()
     kwaktables.insert(0,"Select...")
-    QPORT = f"http://{request.headers.get('Host')}"
+    # QPORT = f"http://{request.headers.get('Host')}"
     return render_template("kwaks.html", msg=msg, kwaktables=kwaktables, img='worldq', QPORT=QPORT)
 
 @app.route("/quakedata", methods=["GET", "POST"])
@@ -260,7 +258,7 @@ def quakedata():
             Parsed geojson data stored locally in sqlite: "
         # the row indices in the response depend on the ordering.  IDs are 15,16.
         # flash(f"quakedata: {session['activetable']}") # flash is more trouble than it's worth
-        QPORT = f"http://{request.headers.get('Host')}"
+        # QPORT = f"http://{request.headers.get('Host')}"
         return render_template("quakedata.html", msg=msg, rows=rowsplus, img='worldq', QPORT=QPORT)
 
 def kwakParams(table):  # returns dict.
@@ -349,7 +347,7 @@ def get_isspath():  # isspath-americas goes over the US and SA
 
 #############  ocean, geo  #################################################
 
-def get_nearest_location(latitude, longitude):
+def OLD_get_nearest_location(latitude, longitude):
     # return country, US state, or ocean color associated w/ lat,lon
     try:
         geolocator = Nominatim(user_agent="CS50p PlanetA")
@@ -375,6 +373,45 @@ def get_nearest_location(latitude, longitude):
     finally:
         print(f"nearest_location={nearest_location}")
     return nearest_location
+
+def get_nearest_location(latitude, longitude):
+    # return country, US state, or ocean associated w/ lat,lon
+    nearest_location = ""
+    try:
+        geolocator = Nominatim(user_agent="CS50p PlanetA")
+        location = geolocator.reverse(f"{latitude}, {longitude}")
+    except:
+        print ("geolocator try failed")
+        nearest_location = { "code": "none", "name": "Nothing",   "color" : "#ffffff" }
+        print(f"nearest_location fallthru={nearest_location}")
+        return nearest_location
+    if location:
+        r = location.raw
+        nearest_loc = {}
+        # print(f"we have a location...{r}")
+        lat = r["lat"]
+        lon = r["lon"]
+        if "address" in r:
+            nearest_loc['code'] = "land"
+            nearest_loc['color'] = ""#00ff00""
+            if "country_code" in r["address"]:
+                if r["address"]["country_code"] == 'us':
+                    nearest_loc['name'] = r["address"]["state"]
+                else:
+                    nearest_loc['name'] = r["address"]["country"]
+            else:  # no country, assume ocean
+                nearest_loc['code'] = "ocean"
+                # nearest_location = oceancolormap(lat,lon)
+                nearest_loc['name'] =  "ocean"
+                nearest_loc['color'] = ""#0000ff""
+    else:  # no location found. use default
+        nearest_loc = { "code": "none", "name": "Nothing",   "color" : "#ffffff" }
+        ocm = oceancolormap(latitude, longitude)
+        nearest_loc["code"] = ocm["code"]
+        nearest_loc["name"] = ocm["name"]
+        nearest_loc["color"] = ocm["color"]        
+    print(f"nearest_location={nearest_loc}")
+    return nearest_loc
 
 @app.route("/oceancolor", methods=["GET"]) # map ocean lat,lon to color
 def oceancolor(): # http://127.0.0.1:5000/oceancolor?lat=10&lon=20
@@ -410,11 +447,12 @@ def revgeo():    #   return full JSON, or "NOWHERE" if not found
         nearest_location = f"{lat}, {lon}"
     else:
         if location:
+            print("==>",location.raw["address"]["town"],"<==")
             return location.raw
         else:
             return "NOWHERE"
 
-def oceancolormap(lat,lon):
+def REFACTORED_TO_project_py__oceancolormap(lat,lon):
     # The color is only meaningful when lat,lon is over an ocean.
     lat = int(float(lat))
     lon = int(float(lon))
@@ -458,13 +496,15 @@ def oceancolormap(lat,lon):
 @app.route("/oceans", methods=["GET"])
 def oceans():
     msg = "This route is used to test reverse geolocation code for ocean locations."
-    QPORT = f"http://{request.headers.get('Host')}"
+    # QPORT = f"http://{request.headers.get('Host')}"
     print(f"-->QPORT={QPORT}=")
     return render_template("oceans.html" , msg=msg, img='worldi', QPORT=QPORT)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit(f"usage: {sys.argv[0]}  [port#]\n")
-    app.run(host="0.0.0.0", port=sys.argv[1], debug=True)
+    # if len(sys.argv) != 2:
+    #     sys.exit(f"usage: {sys.argv[0]}  [port#]\n")
+    # app.run(host="0.0.0.0", port=sys.argv[1], debug=True)
+    # can't specify port in CS50 Docker; replace this with
+    app.run(host="0.0.0.0", port=5000, debug=True)
 
 # END planetA.py   ---o---     ---o---     ---o---     ---o---     ---o---
